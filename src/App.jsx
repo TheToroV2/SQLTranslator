@@ -1,30 +1,44 @@
 import { useState } from "react";
-import { FaDatabase, FaPaperPlane } from "react-icons/fa"; // Importing icons
+import { FaDatabase, FaPaperPlane } from "react-icons/fa";
+import { translateQuery } from "./api"; // Import API function
 import "./App.css";
 
 function App() {
-  const [input, setInput] = useState("");
+    const [input, setInput] = useState("");
+    const [translatedSQL, setTranslatedSQL] = useState("");
 
-  return (
-    <div>
-      <h1><FaDatabase />Welcome to the SQL Translator</h1>
-      <p className="description">
-        This tool allows you to convert natural language queries into SQL statements. 
-        Simply type what you need in plain English, and we'll generate the SQL query for you!
-      </p>
-      <h3>You may enter your message and it will give you an SQL translation</h3>
+    const handleTranslate = async () => {
+        const sqlResult = await translateQuery(input);
+        setTranslatedSQL(sqlResult || "Error translating query. Please try again.");
+    };
 
-      <div className="container">
-        <input 
-          type="text" 
-          placeholder="Enter your query in natural language..." 
-          value={input} 
-          onChange={(e) => setInput(e.target.value)} 
-        />
-        <button><FaPaperPlane />Translate</button>
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <h1><FaDatabase /> Welcome to the SQL Translator</h1>
+            <p className="description">
+                Convert natural language into SQL statements. Type your request in plain English!
+            </p>
+
+            <div className="container">
+                <input 
+                    type="text" 
+                    placeholder="Enter your query in natural language..." 
+                    value={input} 
+                    onChange={(e) => setInput(e.target.value)} 
+                />
+                <button onClick={handleTranslate}>
+                    <FaPaperPlane /> Translate
+                </button>
+            </div>
+
+            {translatedSQL && (
+                <div className="result">
+                    <h3>SQL Translation:</h3>
+                    <p>{translatedSQL}</p>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default App;
